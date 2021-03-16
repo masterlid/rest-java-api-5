@@ -1,0 +1,88 @@
+buildscript {
+  ext {
+    joobyVersion = "2.9.1"
+  }
+}
+
+plugins {
+  id "application"
+  id "io.jooby.run" version "${joobyVersion}"
+  id "io.spring.dependency-management" version "1.0.9.RELEASE"
+  id "com.google.osdetector" version "1.6.2"
+  id "com.github.johnrengelman.shadow" version "5.2.0"
+  id "com.adarshr.test-logger" version "2.1.1"
+  id "io.jooby.openAPI" version "${joobyVersion}"
+}
+
+group "tv.lid.cinema.api5"
+version "1.0.0"
+mainClassName = "tv.lid.cinema.api5.App"
+sourceCompatibility = 1.8
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  jcenter()
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "io.jooby:jooby-bom:$joobyVersion"
+  }
+}
+
+dependencies {
+  implementation "io.jooby:jooby-netty"
+  implementation "io.jooby:jooby-jackson"
+  implementation "ch.qos.logback:logback-classic"
+
+  implementation "com.h2database:h2"
+  implementation "mysql:mysql-connector-java"
+  implementation "org.postgresql:postgresql:42.2.16"
+  implementation "org.jooq:jooq:3.13.4"
+
+  implementation "io.swagger.core.v3:swagger-annotations:2.1.7"
+  implementation "io.jooby:jooby-swagger-ui:2.9.5"
+  implementation "io.jooby:jooby-redoc:2.9.5"
+
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  testImplementation "org.junit.jupiter:junit-jupiter-engine"
+  testImplementation "io.jooby:jooby-test"
+  testImplementation "com.squareup.okhttp3:okhttp"
+}
+
+test {
+  useJUnitPlatform()
+
+  maxHeapSize = '1G'
+  outputs.upToDateWhen {false}
+
+  testlogger {
+      theme 'standard'
+      showExceptions true
+      showPassed true
+      showSkipped true
+      showFailed true
+      showStandardStreams false
+      logLevel 'lifecycle'
+  }
+}
+
+/** Java debug information: */
+tasks.withType(JavaCompile) {
+  options.compilerArgs += [
+    '-parameters',
+  ]
+  options.debug = true
+  options.encoding = 'UTF-8'
+}
+
+shadowJar {
+  mergeServiceFiles()
+}
+
+// выполнять задачу openAPI при запуске задачи run
+run.dependsOn openAPI
+
+// выполнять задачу openAPI при запуске задачи jar
+jar.dependsOn openAPI
