@@ -82,22 +82,20 @@ public class App extends Jooby {
             // фильмы
             final MovieController movCtr = new MovieController();
 
-            get("/movies",        movCtr::list);
-            get("/movies/{page}", movCtr::list);
-            post("/movie",        movCtr::create);
-            get("/movie/{id}",    movCtr::find);
-            put("/movie",         movCtr::modify);
-            delete("/movie/{id}", movCtr::kill);
+            get("/movies/{page}?", movCtr::list);
+            post("/movie",         movCtr::create);
+            get("/movie/{id}",     movCtr::find);
+            put("/movie",          movCtr::modify);
+            delete("/movie/{id}",  movCtr::kill);
 
             // сеансы
             final ScheduleController schCtr = new ScheduleController();
 
-            get("/schedules/{movieId}",        schCtr::list);
-            get("/schedules/{movieId}/{page}", schCtr::list);
-            post("/schedule",                  schCtr::create);
-            get("/schedule/{id}",              schCtr::find);
-            put("/schedule",                   schCtr::modify);
-            delete("/schedule/{id}",           schCtr::kill);
+            get("/schedules/{movieId}/{page}?", schCtr::list);
+            post("/schedule",                   schCtr::create);
+            get("/schedule/{id}",               schCtr::find);
+            put("/schedule",                    schCtr::modify);
+            delete("/schedule/{id}",            schCtr::kill);
         });
     }
 
